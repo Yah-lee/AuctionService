@@ -8,7 +8,6 @@ app.use(express.json());
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello, TypeScript with Express!');
 });
-// test
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
