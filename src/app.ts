@@ -1,12 +1,14 @@
-import express, { Application } from 'express';
-import authRoutes from './routes/authRoutes';
-import errorHandler from './middlewares/errorHandler';
+// src/index.ts or src/app.ts
+import express from 'express';
+import logRoutes from '../src/middlewares/logRoutes';
 
-const app: Application = express();
+const app = express();
 
-app.use(express.json());
-app.use('/api/auth', authRoutes);
+app.use(logRoutes);
 
-app.use(errorHandler);
+// Define your routes
+app.get('/api/users', (req, res) => res.send('Get users'));
+app.post('/api/users', (req, res) => res.send('Create user'));
+// ... other routes
 
 export default app;
