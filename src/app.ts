@@ -7,7 +7,6 @@ const app: Application = express();
 app.use(express.json());
 app.use('/api/auth', authRoutes);
 
-// Middleware for error handling
 app.use(errorHandler);
 
 export default app;
