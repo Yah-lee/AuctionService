@@ -1,13 +1,15 @@
-import express, { Request, Response } from 'express';
+import app from './app';
+import dotenv from 'dotenv';
+import { sequelize } from './database';  // Import sequelize instance
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+dotenv.config();
 
-app.use(express.json());
+const PORT = process.env.PORT || 5000;
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Hello, TypeScript with Express!');
-});
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+sequelize.sync().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}).catch((err) => {
+  console.error('Failed to connect to the database:', err);
 });
