@@ -1,14 +1,10 @@
-// src/routes/index.ts (or any file where you want to list routes)
 import express from 'express';
 
 const app = express();
 
-// Define your routes
 app.get('/api/users', (req, res) => res.send('Get users'));
 app.post('/api/users', (req, res) => res.send('Create user'));
-// ... other routes
 
-// Function to list all routes
 const listRoutes = (app: express.Application) => {
   const routes: { [method: string]: string[] } = {};
 
@@ -20,7 +16,7 @@ const listRoutes = (app: express.Application) => {
         routes[method] = [];
       }
       routes[method].push(path);
-    } else if (middleware.name === 'router') { // mounted routers
+    } else if (middleware.name === 'router') { 
       middleware.handle.stack.forEach((handler: any) => {
         if (handler.route) {
           const path = handler.route.path;
