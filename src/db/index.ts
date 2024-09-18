@@ -1,28 +1,28 @@
-import mongoose, { ConnectOptions } from 'mongoose';
+import { Sequelize } from 'sequelize';
 import { DB_URL } from '../config';
 
-const isConnected = false;
+let isConnected = false;
 
 export const connectToDb = async () => {
-  mongoose.set('strictQuery', true);
-
-  // defensive programming
   if (isConnected) {
-    console.log('MongoDb is already connected');
-
+    console.log('MySQL is already connected');
     return;
   }
 
-  await mongoose.connect(DB_URL!, {
-    dbName: 'rest-api',
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  } as ConnectOptions);
+  const sequelize = new Sequelize('Auction', 'root', '', {
+    host: DB_URL,
+    dialect: 'mysql',
+  });
 
-  const db = mongoose.connection;
+  try {
+    await sequelize.authenticate();
+    console.log('MySQL connection has been established successfully.');
+    isConnected = true;
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
 
-  db.on('error', console.error.bind(console, 'connection error:'));
-  db.once('open', () => console.log('db connected'));
+  return sequelize;
 };
 
 export default {

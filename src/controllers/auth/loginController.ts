@@ -11,11 +11,13 @@ const loginUser = async (
   req: Request<RegisterUserRequest>,
   res: Response<LoginResponse>
 ) => {
-  //[+] validate login user schema
-
   console.log('login user');
 
-  const { email, password } = loginValidator.parse(req.body);
+  // Validate login user schema
+  const { email, password } = loginValidator.parse(req.body) as {
+    email: string;
+    password: string;
+  };
 
   console.log(
     '🚀 ~ file: loginController.ts:20 ~  email, password :',
@@ -29,24 +31,24 @@ const loginUser = async (
 
   if (!user) throw CustomErrorHandler.wrongCredentials();
 
-  //[+] verify if password matches
+  // Verify if password matches
+  if (typeof user.password !== 'string') {
+    throw CustomErrorHandler.wrongCredentials();
+  }
 
   const match = await EncryptionService.isMatch(password, user.password);
 
   if (!match) throw CustomErrorHandler.wrongCredentials();
 
-  // [+] sign jwt
-
+  // Sign JWT
   const access_token = await JwtService.sign({
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     _id: user._id,
     role: user.role,
   });
 
-  //[+] create refresh token
+  // Create refresh token
   const refresh_token = await JwtService.sign(
     {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       _id: user._id,
       role: user.role,
     },
@@ -54,10 +56,10 @@ const loginUser = async (
     REFRESH_TOKEN_SECRET
   );
 
-  //[+] save refresh token to db
+  // Save refresh token to db
   await RefreshToken.create({ token: refresh_token });
 
-  // [+] send jwt to frontend
+  // Send JWT to frontend
   res.json({
     access_token,
     refresh_token,
