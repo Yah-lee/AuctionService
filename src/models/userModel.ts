@@ -1,51 +1,44 @@
-import { DataTypes, Model } from 'sequelize';
-import { sequelize } from '../database';
+import { Document, Schema, model } from 'mongoose';
 
-export enum Role {
+// Define the interface for the User document
+const enum Role {
   ADMIN = 'admin',
   USER = 'user',
 }
-
-class User extends Model {
-  public id!: number;
-  public username!: string;
-  public email!: string;
-  public password!: string;
-  public role!: Role;
-  public readonly createdAt!: Date;
-  public readonly updatedAt!: Date;
+export interface IUser extends Document {
+  username: string;
+  email: string;
+  password: string;
+  role: Role;
 }
 
-User.init(
+// Declare the Schema of the Mongo model
+const userSchema = new Schema<IUser>(
   {
-    id: {
-      type: DataTypes.INTEGER.UNSIGNED,
-      autoIncrement: true,
-      primaryKey: true,
-    },
     username: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+      type: String,
+      required: true,
+      index: true,
     },
     email: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+      type: String,
+      required: true,
       unique: true,
     },
     password: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
+      type: String,
+      required: true,
     },
     role: {
-      type: DataTypes.ENUM(Role.ADMIN, Role.USER),
-      defaultValue: Role.USER,
+      type: String,
+      enum: [Role.ADMIN, Role.USER],
+      default: Role.USER,
     },
   },
   {
-    sequelize,
-    tableName: 'users',
     timestamps: true,
   }
 );
 
-export default User;
+// Export the model
+export default model<IUser>('User', userSchema);

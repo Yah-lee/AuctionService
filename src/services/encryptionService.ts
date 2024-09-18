@@ -1,14 +1,23 @@
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
+/* The `EncryptionService` class is providing methods for encrypting and comparing data using the
+bcrypt library. */
 class EncryptionService {
-  async hashPassword(password: string) {
-    const salt = await bcrypt.genSalt(10);
-    return bcrypt.hash(password, salt);
-  }
+  static async isMatch(data: string, encrypted: string): Promise<boolean> {
+    const match = await bcrypt.compare(data, encrypted);
 
-  async comparePassword(password: string, hashedPassword: string) {
-    return bcrypt.compare(password, hashedPassword);
+    return match;
+  }
+  static async getHashedToken(token: string): Promise<string> {
+    if (typeof token !== 'string') {
+      throw new Error();
+    }
+    const SALT_ROUNDS = 10;
+
+    const hashedToken = await bcrypt.hash(token, SALT_ROUNDS);
+
+    return hashedToken;
   }
 }
 
-export default new EncryptionService();
+export default EncryptionService;

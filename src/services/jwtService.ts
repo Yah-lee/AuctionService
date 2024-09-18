@@ -1,13 +1,23 @@
 import jwt from 'jsonwebtoken';
+import { JWT_SECRET } from '../config';
+interface TokenData {
+  _id: string;
+  role: string;
+}
 
 class JwtService {
-  sign(payload: object, expiresIn: string = '1h', secret = process.env.JWT_SECRET || 'secret') {
-    return jwt.sign(payload, secret, { expiresIn });
+  // eslint-disable-next-line @typescript-eslint/require-await
+  static async sign(
+    payload: { _id: string; role: string },
+    expiry = '60s',
+    secret = JWT_SECRET!
+  ) {
+    return jwt.sign(payload, secret, { expiresIn: expiry });
   }
 
-  verify(token: string, secret = process.env.JWT_SECRET || 'secret') {
-    return jwt.verify(token, secret);
+  static verify(token: string, secret = JWT_SECRET!): TokenData {
+    return jwt.verify(token, secret) as TokenData;
   }
 }
 
-export default new JwtService();
+export default JwtService;
