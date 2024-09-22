@@ -11,7 +11,7 @@ exports.registerSchema = zod_1.z
   })
   .refine((data) => data.password === data.repeat_password, {
     message: "Passwords don't match",
-    path: ["repeat_password"], // path of error
+    path: ["repeat_password"],
   });
 exports.registerSchema.refine((obj) => obj.password != obj.repeat_password);
 exports.loginSchema = zod_1.z.object({

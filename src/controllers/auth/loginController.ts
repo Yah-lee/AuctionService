@@ -13,7 +13,6 @@ const loginUser = async (
 ) => {
   console.log('login user');
 
-  // Validate login user schema
   const { email, password } = loginValidator.parse(req.body) as {
     email: string;
     password: string;
@@ -31,7 +30,6 @@ const loginUser = async (
 
   if (!user) throw CustomErrorHandler.wrongCredentials();
 
-  // Verify if password matches
   if (typeof user.password !== 'string') {
     throw CustomErrorHandler.wrongCredentials();
   }
@@ -40,13 +38,11 @@ const loginUser = async (
 
   if (!match) throw CustomErrorHandler.wrongCredentials();
 
-  // Sign JWT
   const access_token = await JwtService.sign({
     _id: user._id,
     role: user.role,
   });
 
-  // Create refresh token
   const refresh_token = await JwtService.sign(
     {
       _id: user._id,
@@ -56,10 +52,8 @@ const loginUser = async (
     REFRESH_TOKEN_SECRET
   );
 
-  // Save refresh token to db
   await RefreshToken.create({ token: refresh_token });
 
-  // Send JWT to frontend
   res.json({
     access_token,
     refresh_token,
