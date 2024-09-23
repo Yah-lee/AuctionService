@@ -19,12 +19,10 @@ const registerUser = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    // [+] validate the request and extract info
     const { username, email, password } = await registerSchema.parseAsync(
       req.body
     );
 
-    //[+] check if user is in database already
     const userExists = await User.exists({ email });
 
     if (userExists)
@@ -32,10 +30,8 @@ const registerUser = async (
         CustomErrorHandler.alreadyExists('This email is already taken')
       );
 
-    //[+] hash password to encrypt
     const hashedPassword = await EncryptionService.getHashedToken(password);
 
-    //[+] create user object
     const userInfo = {
       username,
       email,
@@ -43,19 +39,15 @@ const registerUser = async (
       role: Role.ADMIN,
     };
 
-    //[+] save user to database
     const user: IUser = await User.create(userInfo);
 
-    //[+] create access_token
     const access_token = await JwtService.sign({
       _id: user._id as string,
       role: user.role,
     });
 
-    //[+] create refresh_token
     const refresh_token = await JwtService.sign(
       {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         _id: user.id,
         role: user.role,
       },
@@ -63,10 +55,8 @@ const registerUser = async (
       REFRESH_TOKEN_SECRET
     );
 
-    //[+] save refresh_token to db
     await RefreshToken.create({ token: refresh_token });
 
-    // [+] send response
     const tokens: Tokens = { access_token, refresh_token };
     res.status(201).json(tokens);
   } catch (err) {
