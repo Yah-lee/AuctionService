@@ -22,12 +22,10 @@ const me = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    //[+] Ensure that user Auth Info is present in the request object ,using a Type Guard
 
     if (!hasUserAuth(req))
       throw CustomErrorHandler.userAuthFailed('user not attached');
 
-    //[+] Retrieve required user info , while removing the un-necessary fields
     const EXCLUDED_FIELDS = '-password -updatedAt -createdAt -__v';
 
     /*  The `select` method is used to
@@ -62,7 +60,6 @@ const logout = async (req: Request, res: Response) => {
 
   const data: IRefreshToken = refreshTokenValidator.parse(body);
 
-  //[+] Find Refresh Token in DB and delete
   await RefreshToken.findOneAndDelete({ token: data.refresh_token });
 
   res.status(204).end();
