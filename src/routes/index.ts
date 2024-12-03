@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
 import express from 'express';
 
 import {
@@ -13,7 +12,6 @@ import { admin, auth } from '../middlewares';
 
 const router = express.Router();
 
-//Authentication routes
 
 router.post('/register', registerController.registerUser);
 
@@ -21,13 +19,11 @@ router.post('/login', loginController.loginUser);
 
 router.post('/refresh', refreshTokenController.refresh);
 
-//user routes
 
 router.get('/me', [auth], userController.me);
 
 router.post('/logout', [auth], userController.logout);
 
-//products
 
 router.post('/products', [auth, admin], productController.create);
 
